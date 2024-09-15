@@ -12,7 +12,7 @@ def map_special_keys(key):
     return mapping[key] if key in mapping.keys() else key
 
 ctx = {
-    "file_name": "keystrokes.csv",
+    "file_name": "keystrokes_3.csv",
     "buffer": [],
     "allowed_keys": [ chr( ord('A') + i) for i in range(26)] + [ chr( ord('a') + i) for i in range(26)] + ["space", "shift", "'"] ,
     "map_special_keys_fn": map_special_keys,
@@ -46,7 +46,7 @@ def prepare_csv(file_name):
         writer.writerow(["event_type", "key", "timestamp"])
     
 def main():
-    prepare_csv("keystrokes.csv")
+    prepare_csv(ctx["file_name"])
     keyboard.hook(on_keystroke_callback(ctx))
     try:
         keyboard.wait()
