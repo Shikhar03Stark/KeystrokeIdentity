@@ -12,7 +12,7 @@ def map_to_ascii(key):
     return mapping[key] if key in mapping else ord(key.upper())
 
 ctx = {
-    "file_name": "keystrokes_7.csv",
+    "file_name": "keystrokes_11.csv",
     "buffer": [],
     "allowed_keys": [ chr( ord('A') + i) for i in range(26)] + [ chr( ord('a') + i) for i in range(26)] + ["?", "space", "shift", "'", ",", ".", "backspace", "\""],
     "map_to_ascii_fn": map_to_ascii,
