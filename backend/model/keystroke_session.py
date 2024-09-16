@@ -4,7 +4,8 @@ from pydantic import BaseModel, UUID4
 
 
 class KeyStrokeSession(BaseModel):
-    session_id: UUID4
-    phrase_id: UUID4
+    mode: str # INIT, STROKE, NEXT, END
     payload: str
+    session_id: Optional[int] = -1
+    phrase_idx: Optional[int] = -1
     user_id: Optional[int] = -1

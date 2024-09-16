@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from model.user import UserSchema
 
 class UserDTO(BaseModel):
-    id: Optional[int]
+    id: Optional[int] = -1
     username: str
     password: str | None
         
