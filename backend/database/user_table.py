@@ -11,7 +11,7 @@ class UserTable(CRUDTable):
         self.conn = conn
         
     def find_by_username(self, username: str):
-        sql = """SELECT * FROM "user" u WHERE u.username = %s"""
+        sql = """SELECT * FROM "users" u WHERE u.username = %s"""
         user = None
         try:
             with self.conn.cursor() as cur:
@@ -25,7 +25,7 @@ class UserTable(CRUDTable):
             return user
     
     def insert_one(self, schema: UserSchema):
-        sql = """INSERT INTO "user" (username, password) VALUES (%s, %s) RETURNING id"""
+        sql = """INSERT INTO "users" (username, password) VALUES (%s, %s) RETURNING id"""
         user_id = None
         try:
             with self.conn.cursor() as cur:
@@ -43,7 +43,7 @@ class UserTable(CRUDTable):
         
         
     def insert_many(self, schemas: List[UserSchema]):
-        sql = """INSERT INTO "user" (username, password) VALUES (%s) RETURNING id"""
+        sql = """INSERT INTO "users" (username, password) VALUES (%s) RETURNING id"""
         user_ids = []
         try:
             with self.conn.cursor() as cur:
@@ -61,7 +61,7 @@ class UserTable(CRUDTable):
         
     
     def delete(self, id: int):
-        sql = 'DELETE FROM user WHERE id = %s'
+        sql = 'DELETE FROM users WHERE id = %s'
         try:
             with self.conn.cursor() as cur:
                 cur.execute(sql, (id,))
@@ -73,7 +73,7 @@ class UserTable(CRUDTable):
             
     def update(self, id: int, schema: UserSchema):
         
-        sql = 'UPDATE user SET username = %s, password = %s WHERE id = %s'
+        sql = 'UPDATE users SET username = %s, password = %s WHERE id = %s'
         try:
             with self.conn.cursor() as cur:
                 cur.execute(sql, (schema.username, schema.password, id))
@@ -84,7 +84,7 @@ class UserTable(CRUDTable):
             
             
     def get_by_id(self, id: int):
-        sql = 'SELECT * FROM user WHERE id = %s'
+        sql = 'SELECT * FROM users WHERE id = %s'
         user = None
         try:
             with self.conn.cursor() as cur:
