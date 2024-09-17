@@ -71,8 +71,7 @@ class UserTable(CRUDTable):
             self.conn.rollback()
             
             
-    def update(self, id: int, schema: UserSchema):
-        
+    def update(self, id: int, schema: UserSchema):        
         sql = """UPDATE "users" SET username = %s, password = %s WHERE id = %s"""
         try:
             with self.conn.cursor() as cur:

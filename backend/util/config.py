@@ -3,9 +3,9 @@ from dotenv import load_dotenv
 
 config = {
     'dev': {
-        'port': 5000,
-        "db_username": "keystroke",
-        "db_password": "password",
+        'port': 5432,
+        "db_username": "postgres",
+        "db_password": "admin",
         "db_host": "localhost",
     },
     'prod': {
