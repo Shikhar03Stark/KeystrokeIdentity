@@ -3,13 +3,15 @@ from dotenv import load_dotenv
 
 config = {
     'dev': {
-        'port': 5432,
-        "db_username": "postgres",
-        "db_password": "admin",
+        'app_port': 8000,
+        'db_port': 5432,
+        "db_username": "keystroke",
+        "db_password": "password",
         "db_host": "localhost",
+        "jwt_secret": "keystroke_identity_000",
     },
     'prod': {
-        'port': 3888,
+        'app_port': 3888,
     },
 }
 

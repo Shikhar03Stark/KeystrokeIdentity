@@ -8,4 +8,8 @@ auth_router = APIRouter()
 def signup(user: UserDTO, response: Response):
     
     return auth_service.register_user(user, response)
+
+@auth_router.post("/manual_login")
+def manual_login(user: UserDTO, response: Response):
+    return auth_service.manual_login(user, response)
     
