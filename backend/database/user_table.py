@@ -25,11 +25,11 @@ class UserTable(CRUDTable):
             return user
     
     def insert_one(self, schema: UserSchema):
-        sql = """INSERT INTO "users" (username, password) VALUES (%s, %s) RETURNING id"""
+        sql = """INSERT INTO "users" (username, password, signup_status, signup_phrases_completed, signup_phrases_target) VALUES (%s, %s, %s, %s, %s) RETURNING id"""
         user_id = None
         try:
             with self.conn.cursor() as cur:
-                cur.execute(sql, (schema.username, schema.password))
+                cur.execute(sql, (schema.username, schema.password, schema.signup_status, schema.signup_phrases_completed, schema.signup_phrases_target))
                 rows = cur.fetchone()
                 if rows:
                     user_id = rows[0]
@@ -43,11 +43,11 @@ class UserTable(CRUDTable):
         
         
     def insert_many(self, schemas: List[UserSchema]):
-        sql = """INSERT INTO "users" (username, password) VALUES (%s) RETURNING id"""
+        sql = """INSERT INTO "users" username, password, signup_status, signup_phrases_completed, signup_phrases_target) VALUES (%s) RETURNING id"""
         user_ids = []
         try:
             with self.conn.cursor() as cur:
-                cur.executemany(sql, [(schema.username, schema.password) for schema in schemas])
+                cur.executemany(sql, [(schema.username, schema.password, schema.signup_status, schema.signup_phrases_completed, schema.signup_phrases_target) for schema in schemas])
                 rows = cur.fetchall()
                 if rows:
                     user_ids = [row[0] for row in rows]
@@ -72,10 +72,10 @@ class UserTable(CRUDTable):
             
             
     def update(self, id: int, schema: UserSchema):        
-        sql = """UPDATE "users" SET username = %s, password = %s WHERE id = %s"""
+        sql = """UPDATE "users" SET username = %s, password = %s, signup_status = %s, signup_phrases_completed = %s, signup_phrases_traget = %s WHERE id = %s"""
         try:
             with self.conn.cursor() as cur:
-                cur.execute(sql, (schema.username, schema.password, id))
+                cur.execute(sql, (schema.username, schema.password, schema.signup_status, schema.signup_phrases_completed, schema.signup_phrases_target, id))
                 self.conn.commit()
         except Exception as e:
             print(e)

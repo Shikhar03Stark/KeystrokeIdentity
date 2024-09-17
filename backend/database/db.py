@@ -9,6 +9,7 @@ def conn() -> pg.connect:
     db_name = 'keystroke'
     try:
         with pg.connect(host=db_host, database=db_name, user=db_username, password=db_password) as conn:
+            print(f"Connected to {db_name} database")
             return conn
     except Exception as e:
         print(e)
