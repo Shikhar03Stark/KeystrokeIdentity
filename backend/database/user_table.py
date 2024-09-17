@@ -72,7 +72,7 @@ class UserTable(CRUDTable):
             
             
     def update(self, id: int, schema: UserSchema):        
-        sql = """UPDATE "users" SET username = %s, password = %s, signup_status = %s, signup_phrases_completed = %s, signup_phrases_traget = %s WHERE id = %s"""
+        sql = """UPDATE "users" SET username = %s, password = %s, signup_status = %s, signup_phrases_completed = %s, signup_phrases_target = %s WHERE id = %s"""
         try:
             with self.conn.cursor() as cur:
                 cur.execute(sql, (schema.username, schema.password, schema.signup_status, schema.signup_phrases_completed, schema.signup_phrases_target, id))

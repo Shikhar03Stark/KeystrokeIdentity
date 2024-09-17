@@ -2,6 +2,11 @@ import json
 from typing import Optional, List
 
 import torch
+from database.user_table import UserTable
+from model.user import UserSchema
+from model.embedding import EmbeddingSchema
+from database.embedding_table import EmbeddingTable
+from database.db import conn
 from model.keystroke_response import KeyStrokeResponse
 from model.stroke import KeyStrokeInfo
 from typeformer.model.Model import HARTrans
@@ -65,18 +70,23 @@ class KeyStrokeHandler:
     session_id: Optional[int] = -1
     user_id: Optional[int] = -1
     transformer: HARTrans
+    user: Optional[UserSchema] = None
     keywise_feature_generator: callable
     model_input_generator: callable
+    embedding_table: EmbeddingTable
+    user_table: UserTable
     
     def __init__(self, keystroke_session: KeyStrokeSession = None):
         if keystroke_session is not None:
-            self.session_id = keystroke_session.session_id
-            self.user_id = keystroke_session.user_id
+            self._reset_ids(keystroke_session)
             
         self.phrase_embeddings = []
         self.transformer = Transformer.get()
         self.keywise_feature_generator = keywise_feature_generator()
         self.model_input_generator = model_input_generator()
+        self.embedding_table = EmbeddingTable(conn())
+        self.user_table = UserTable(conn())
+        
     
     
     def session_handler(self, keystroke_session: KeyStrokeSession):
@@ -85,6 +95,7 @@ class KeyStrokeHandler:
             print("Initiating session")
             self._reset_ids(keystroke_session)
             self._reset_generator()
+            self._fetch_user()
         elif keystroke_session.mode == "NEXT":
             print("Saving phrase embeddings mean")
             self._save_embeddings()
@@ -99,18 +110,34 @@ class KeyStrokeHandler:
             
         return response
     
+    def _fetch_user(self):
+        user = self.user_table.get_by_id(self.user_id)
+        if user is None:
+            raise Exception("User not found")
+        self.user = user
+    
     def _reset_ids(self, keystroke_session: KeyStrokeSession):
         self.session_id = keystroke_session.session_id
         self.user_id = keystroke_session.user_id
+        
     
     def _reset_generator(self):
         self.keywise_feature_generator = keywise_feature_generator()
         self.model_input_generator = model_input_generator()
 
+    def _update_user_signup_completion(self):
+        completed = self.user.signup_phrases_completed + 1
+        if completed >= self.user.signup_phrases_target:
+            self.user.signup_status = "COMPLETED"
+        self.user.signup_phrases_completed = completed
+        self.user_table.update(self.user_id, self.user)
+
     def _save_embeddings(self):
         if len(self.phrase_embeddings) > 0:
-            condensed = mean_of_vectors(torch.stack(self.phrase_embeddings))
-            print(condensed)
+            condensed_embedding = mean_of_vectors(torch.stack(self.phrase_embeddings))[0, :]
+            embeddingSchema = EmbeddingSchema(embedding=condensed_embedding.tolist(), user_id=self.user_id, purpose="SIGNUP")
+            self.embedding_table.insert_one(embeddingSchema)
+            self._update_user_signup_completion()
         self.phrase_embeddings = []
     
     def _eval_embedding(self, payload: str):
