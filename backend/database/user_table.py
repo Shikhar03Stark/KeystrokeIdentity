@@ -61,7 +61,7 @@ class UserTable(CRUDTable):
         
     
     def delete(self, id: int):
-        sql = 'DELETE FROM users WHERE id = %s'
+        sql = """DELETE FROM "users" u WHERE u.id = %s"""
         try:
             with self.conn.cursor() as cur:
                 cur.execute(sql, (id,))
@@ -71,9 +71,8 @@ class UserTable(CRUDTable):
             self.conn.rollback()
             
             
-    def update(self, id: int, schema: UserSchema):
-        
-        sql = 'UPDATE users SET username = %s, password = %s WHERE id = %s'
+    def update(self, id: int, schema: UserSchema):        
+        sql = """UPDATE "users" SET username = %s, password = %s WHERE id = %s"""
         try:
             with self.conn.cursor() as cur:
                 cur.execute(sql, (schema.username, schema.password, id))
@@ -84,7 +83,7 @@ class UserTable(CRUDTable):
             
             
     def get_by_id(self, id: int):
-        sql = 'SELECT * FROM users WHERE id = %s'
+        sql = """SELECT * FROM "users" u WHERE u.id = %s"""
         user = None
         try:
             with self.conn.cursor() as cur:
