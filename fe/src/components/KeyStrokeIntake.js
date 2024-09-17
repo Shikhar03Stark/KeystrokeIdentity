@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 
 const KeyStrokeIntake = () => {
   const location = useLocation();
-  const userId = location.state?.userId;  // Access the user ID from state
+  const userId = location.state?.userId; // Access the user ID from state
   const [phrases] = useState([
     "The quick brown fox jumps over the lazy dog.",
     "A journey of a thousand miles begins with a single step.",
@@ -14,12 +14,20 @@ const KeyStrokeIntake = () => {
   const [currentPhrase, setCurrentPhrase] = useState(phrases[0]);
   const [inputText, setInputText] = useState("");
   const ws = useRef(null);
+  const [phraseIndex, setPhraseIndex] = useState(0);
 
+  // Initialize WebSocket connection and send INIT event
   useEffect(() => {
     ws.current = new WebSocket("ws://localhost:8000/register_keystrokes");
 
     ws.current.onopen = () => {
       console.log("WebSocket connection established.");
+      // Send INIT message with userId
+      const initMessage = {
+        mode: "INIT",
+        user_id: userId
+      };
+      ws.current.send(JSON.stringify(initMessage));
     };
 
     ws.current.onclose = () => {
@@ -31,12 +39,13 @@ const KeyStrokeIntake = () => {
         ws.current.close();
       }
     };
-  }, []);
+  }, [userId]);
 
+  // Function to send key event (STROKE mode)
   const sendKeyEvent = useCallback((eventType, key) => {
     const timestamp = new Date().getTime();
     const payload = JSON.stringify({
-      event_type: eventType, // 'D' for down, 'U' for up
+      event_type: eventType, // 'D' for key down, 'U' for key up
       key: key.charCodeAt(0), // Send key as ASCII code
       timestamp
     });
@@ -50,30 +59,55 @@ const KeyStrokeIntake = () => {
     if (ws.current && ws.current.readyState === WebSocket.OPEN) {
       ws.current.send(JSON.stringify(message));
     }
-  }, [userId]); // Add userId as dependency for sendKeyEvent
+  }, [userId]);
 
-  const handleKeyDown = useCallback((e) => {
-    sendKeyEvent("D", e.key); // 'D' for key down
-  }, [sendKeyEvent]);  // Include sendKeyEvent as dependency
+  // Handle key down event
+  const handleKeyDown = useCallback(
+    (e) => {
+      if (e.key === "Enter" && inputText === currentPhrase) {
+        // When phrase is completed and Enter is pressed, send NEXT event
+        const nextMessage = {
+          mode: "NEXT",
+          user_id: userId
+        };
+        ws.current.send(JSON.stringify(nextMessage));
 
-  const handleKeyUp = useCallback((e) => {
-    sendKeyEvent("U", e.key); // 'U' for key up
-  }, [sendKeyEvent]);  // Include sendKeyEvent as dependency
+        // Move to the next phrase if available
+        const nextIndex = phraseIndex + 1;
+        if (nextIndex < phrases.length) {
+          setCurrentPhrase(phrases[nextIndex]);
+          setInputText("");
+          setPhraseIndex(nextIndex);
+        } else {
+          // If all phrases are done, send END event
+          const endMessage = {
+            mode: "END",
+            user_id: userId
+          };
+          ws.current.send(JSON.stringify(endMessage));
+          alert("You've completed all phrases!");
+        }
+      } else {
+        sendKeyEvent("D", e.key); // 'D' for key down
+      }
+    },
+    [inputText, currentPhrase, phraseIndex, userId, phrases, sendKeyEvent]
+  );
 
+  // Handle key up event
+  const handleKeyUp = useCallback(
+    (e) => {
+      sendKeyEvent("U", e.key); // 'U' for key up
+    },
+    [sendKeyEvent]
+  );
+
+  // Handle input change (text entry)
   const handleChange = (e) => {
     setInputText(e.target.value);
-
-    if (e.target.value === currentPhrase) {
-      const nextIndex = phrases.indexOf(currentPhrase) + 1;
-      if (nextIndex < phrases.length) {
-        setCurrentPhrase(phrases[nextIndex]);
-        setInputText("");
-      } else {
-        alert("You've completed all phrases!");
-      }
-    }
   };
 
+  // Add event listeners for key down and key up
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
@@ -82,7 +116,7 @@ const KeyStrokeIntake = () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [handleKeyDown, handleKeyUp]);  // Now these functions are dependencies
+  }, [handleKeyDown, handleKeyUp]);
 
   return (
     <div>
