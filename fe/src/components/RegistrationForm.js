@@ -9,31 +9,37 @@ function RegistrationForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
-    // Simulating API call
-    const response = await fetch('http://localhost:8000/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    });
-    
-    if (response.ok) {
-      // On successful registration, navigate to the next step
-      navigate('/key-stroke-intake');
-    } else {
-      // Handle error
-      setError('Registration failed. Please try again.');
+
+    try {
+      // Simulating API call
+      const response = await fetch('http://localhost:8000/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const userId = data.id;  // Assuming the response contains the user ID.
+
+        // Navigate to the next step, passing the user ID as state
+        navigate('/key-stroke-intake', { state: { userId } });
+      } else {
+        setError('Registration failed. Please try again.');
+      }
+    } catch (error) {
+      setError('An error occurred during registration.');
     }
   };
 
   return (
     <div className="RegistrationForm">
       <h2>Register</h2>
-      
+
       {error && <p style={{ color: 'red' }}>{error}</p>}
-      
+
       <form onSubmit={handleSubmit}>
         <div>
           <label>Username:</label>
@@ -44,7 +50,7 @@ function RegistrationForm() {
             required
           />
         </div>
-        
+
         <div>
           <label>Password:</label>
           <input
@@ -54,7 +60,7 @@ function RegistrationForm() {
             required
           />
         </div>
-        
+
         <button type="submit">Register</button>
       </form>
     </div>
