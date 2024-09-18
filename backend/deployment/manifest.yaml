@@ -1,0 +1,98 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-secret
+  labels:
+    app: postgres
+data:
+  POSTGRES_DB: keystroke
+  POSTGRES_USER: keystroke
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-keystroke-disk
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: keystroke-disk
+  resources:
+    requests:
+      storage: 10Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: 'pgvector/pgvector:pg16'
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: postgres-secret
+            - secretRef:
+                name: db-password
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: postgresdata
+              subPath: postgres
+      volumes:
+        - name: postgresdata
+          persistentVolumeClaim:
+            claimName: pvc-keystroke-disk
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keystroke-env
+  labels:
+    app: keystroke-env
+data:
+  ENV: prod
+  POSTGRES_DB: keystroke
+  POSTGRES_USER: keystroke
+  POSTGRES_HOST: '10.0.236.204'
+  JWT_SECRET: 'keystroke_jwt_secret_12345'
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keystroke-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: keystroke-app
+  template:
+    metadata:
+      labels:
+        app: keystroke-app
+    spec:
+      containers:
+        - name: keystroke-app
+          image: 'shikhar03stark/keystroke-identity-app:2'
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000      
+          envFrom:
+            - secretRef:
+                name: db-password
+            - configMapRef:
+                name: keystroke-env
