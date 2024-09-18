@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
+import "./KeyStrokeIntake.css"; // Import the CSS file
 
 const KeyStrokeIntake = () => {
   const location = useLocation();
+  const navigate = useNavigate(); // Hook for navigation
   const userId = location.state?.userId; // Access the user ID from state
   const [phrases] = useState([
     "The quick brown fox jumps over the lazy dog.",
@@ -13,8 +15,10 @@ const KeyStrokeIntake = () => {
   ]);
   const [currentPhrase, setCurrentPhrase] = useState(phrases[0]);
   const [inputText, setInputText] = useState("");
-  const ws = useRef(null);
   const [phraseIndex, setPhraseIndex] = useState(0);
+  const [countdown, setCountdown] = useState(3); // Timer state for 3-second countdown
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false); // Message state
+  const ws = useRef(null);
 
   // Initialize WebSocket connection and send INIT event
   useEffect(() => {
@@ -85,13 +89,25 @@ const KeyStrokeIntake = () => {
             user_id: userId
           };
           ws.current.send(JSON.stringify(endMessage));
-          alert("You've completed all phrases!");
+
+          // Show success message and start countdown timer
+          setShowSuccessMessage(true);
+
+          let timer = 3;
+          const countdownInterval = setInterval(() => {
+            setCountdown(timer);
+            timer--;
+            if (timer < 0) {
+              clearInterval(countdownInterval);
+              navigate("/"); // Redirect to home page after countdown
+            }
+          }, 1000);
         }
       } else {
         sendKeyEvent("D", e.key); // 'D' for key down
       }
     },
-    [inputText, currentPhrase, phraseIndex, userId, phrases, sendKeyEvent]
+    [inputText, currentPhrase, phraseIndex, userId, phrases, sendKeyEvent, navigate]
   );
 
   // Handle key up event
@@ -119,16 +135,25 @@ const KeyStrokeIntake = () => {
   }, [handleKeyDown, handleKeyUp]);
 
   return (
-    <div>
-      <h3>Type the following phrase:</h3>
-      <p>{currentPhrase}</p>
+    <div className="keystroke-container">
+      <h3 className="keystroke-title">Type the following phrase:</h3>
+      <p className="keystroke-phrase">{currentPhrase}</p>
       <input
+        className="keystroke-input"
         type="text"
         value={inputText}
         onChange={handleChange}
         onKeyDown={handleKeyDown}
         onKeyUp={handleKeyUp}
+        placeholder="Start typing here..."
       />
+
+      {showSuccessMessage && (
+        <div className="success-message">
+          <h3>Signup successful!</h3>
+          <p>Redirecting to home page in {countdown}...</p>
+        </div>
+      )}
     </div>
   );
 };
