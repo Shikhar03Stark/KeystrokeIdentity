@@ -1,16 +1,20 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import RegistrationForm from './components/RegistrationForm';
+import SignupForm from './components/SignupForm';
 import KeyStrokeIntake from './components/KeyStrokeIntake';
-import './App.css';
+import HomePage from './components/HomePage'; // Import the HomePage component
+import './App.css'; // Import the CSS
 
 function App() {
   return (
     <Router>
       <div className="App">
         <Routes>
+          {/* Home Page */}
+          <Route path="/" element={<HomePage />} />
+          
           {/* Registration Page */}
-          <Route path="/register" element={<RegistrationForm />} />
+          <Route path="/signup" element={<SignupForm />} />
           
           {/* Next Steps after registration */}
           <Route path="/key-stroke-intake" element={<KeyStrokeIntake />} />
