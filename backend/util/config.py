@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 config = {
     'dev': {
         'app_port': 8000,
-        'db_port': 5432,
+        'db_port': 5433,
         "db_username": "keystroke",
         "db_password": "password",
         "db_host": "localhost",

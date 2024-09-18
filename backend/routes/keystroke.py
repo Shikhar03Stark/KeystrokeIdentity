@@ -16,6 +16,7 @@ async def endpoint(websocket: WebSocket):
         try :
             data = await websocket.receive_text()
             json_data = json.loads(data)
+            print(json_data)
             session = KeyStrokeSession(**json_data)
             response = keystroke_handler.session_handler(session)
             await websocket.send_text(response.to_json())
