@@ -19,10 +19,11 @@ const KeyStrokeIntake = () => {
   const [countdown, setCountdown] = useState(3); // Timer state for 3-second countdown
   const [showSuccessMessage, setShowSuccessMessage] = useState(false); // Message state
   const ws = useRef(null);
+  const backend_url = "http://localhost:8000" // http://keystroke.devitvish.in
 
   // Initialize WebSocket connection and send INIT event
   useEffect(() => {
-    ws.current = new WebSocket("ws://localhost:8000/register_keystrokes");
+    ws.current = new WebSocket(`${backend_url}/register_keystrokes`);
 
     ws.current.onopen = () => {
       console.log("WebSocket connection established.");
@@ -99,7 +100,7 @@ const KeyStrokeIntake = () => {
             timer--;
             if (timer < 0) {
               clearInterval(countdownInterval);
-              navigate("/"); // Redirect to home page after countdown
+              navigate("/login"); // Redirect to home page after countdown
             }
           }, 1000);
         }
@@ -136,7 +137,7 @@ const KeyStrokeIntake = () => {
 
   return (
     <div className="keystroke-container">
-      <h3 className="keystroke-title">Type the following phrase:</h3>
+      <h3 className="keystroke-title">Type the following phrase {phraseIndex+1} / {phrases.length} :</h3>
       <p className="keystroke-phrase">{currentPhrase}</p>
       <input
         className="keystroke-input"

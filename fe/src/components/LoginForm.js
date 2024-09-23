@@ -9,19 +9,19 @@ const LoginForm = () => {
     "The quick brown fox jumps over the lazy dog.",
     "A journey of a thousand miles begins with a single step.",
     "To be or not to be, that is the question.",
-    "All that glitters is not gold.",
-    "I think, therefore I am."
   ]);
   const [currentPhrase, setCurrentPhrase] = useState(phrases[0]);
+  const [confidenceScore, setConfidenceScore] = useState(0.0);
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(false); // State to track typing start
   const [error, setError] = useState(null);
+  const [validUsername, setValidUsername] = useState(false);
   const ws = useRef(null);
   const navigate = useNavigate();
 
   // WebSocket connection setup
   useEffect(() => {
-    ws.current = new WebSocket("ws://localhost:8000/login_keystrokes");
+    ws.current = new WebSocket("ws://localhost:8000/verify_keystrokes");
 
     ws.current.onopen = () => {
       console.log("WebSocket connection established.");
@@ -30,6 +30,21 @@ const LoginForm = () => {
     ws.current.onclose = () => {
       console.log("WebSocket connection closed.");
     };
+
+    ws.current.addEventListener('message', (event) => {
+      let raw = event.data;
+      raw = raw.replace(/'/g, '"');
+      raw = raw.replace(/&quot;/ig, 'true');
+      console.log(`from ws:: ${event.data}`);
+      const data = JSON.parse(raw);
+      if (data.status === "OK"){
+        if(data.user_id !== -1 && validUsername === false){
+          setValidUsername(true);
+        }
+      } else {
+        setError("Error processing your request. Please try again.");
+      }
+    });
 
     return () => {
       if (ws.current) {
@@ -86,10 +101,16 @@ const LoginForm = () => {
           // Receive the backend validation response
           ws.current.onmessage = (event) => {
             const response = JSON.parse(event.data);
-            if (response.status === "success") {
+            if (response.status === "OK") {
+              const jwt = response.payload;
+              if (jwt.length === 0) {
+                setError(`Login failed, confidence too low ${confidenceScore.toFixed(2)}. Please try again manual login.`);
+                return;
+              }
+              localStorage.setItem("jwt", jwt);
               navigate("/home"); // Redirect to home on success
             } else {
-              setError("Login failed. User authentication did not match.");
+              setError(`Login failed, confidence too low ${confidenceScore.toFixed(2)}. Please try again manual login.`);
             }
           };
         }
@@ -115,7 +136,24 @@ const LoginForm = () => {
   const handleUsernameSubmit = (e) => {
     e.preventDefault();
     if (username) {
-      setIsTyping(true); // Start the phrase input process
+      const body = {
+        "mode": "INIT",
+        "username": username,
+      }
+      ws.current.send(JSON.stringify(body));
+
+      ws.current.onmessage = (event) => {
+        const response = JSON.parse(event.data);
+        if (response.status === "OK" && response.user_id !== -1) {
+          setIsTyping(true); // Start the phrase input process
+          setConfidenceScore(response.verify_confidence);
+        } else if (response.user_id === -1) {
+          setError("Username not found. Please try again.");
+        } else {
+          console.log(response);
+          setError("An error occurred. Please try again.");
+        }
+      }
     } else {
       setError("Username is required.");
     }
@@ -155,6 +193,7 @@ const LoginForm = () => {
       ) : (
         <div className="phrase-input">
           <h3>Type the following phrase:</h3>
+          <h2>Confidence Score: {confidenceScore.toFixed(2)}</h2>
           <p>{currentPhrase}</p>
           <input
             type="text"

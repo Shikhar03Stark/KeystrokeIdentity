@@ -7,12 +7,13 @@ function RegistrationForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const backend_url = "http://localhost:8000" // http://keystroke.devitvish.in
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:8000/signup', {
+      const response = await fetch(`${backend_url}/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
