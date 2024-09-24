@@ -20,14 +20,11 @@ const KeyStrokeIntake = () => {
   const [countdown, setCountdown] = useState(3); // Timer state for 3-second countdown
   const [showSuccessMessage, setShowSuccessMessage] = useState(false); // Message state
   const ws = useRef(null);
-<<<<<<< Updated upstream
-=======
-  const backend_url = `http://${config.backend_host}` // http://keystroke.devitvish.in
->>>>>>> Stashed changes
+  const backend_host = `${config.backend_host}` // http://keystroke.devitvish.in
 
   // Initialize WebSocket connection and send INIT event
   useEffect(() => {
-    ws.current = new WebSocket("ws://localhost:8000/register_keystrokes");
+    ws.current = new WebSocket(`ws://${backend_host}/register_keystrokes`);
 
     ws.current.onopen = () => {
       console.log("WebSocket connection established.");
