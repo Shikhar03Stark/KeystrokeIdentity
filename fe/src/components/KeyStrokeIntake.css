@@ -1,0 +1,55 @@
+/* KeyStrokeIntake.css */
+
+.keystroke-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f0f8ff; /* Light blue background */
+    padding: 20px;
+  }
+  
+  .keystroke-title {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .keystroke-phrase {
+    font-family: 'Arial', sans-serif;
+    font-size: 1.2rem;
+    color: #555;
+    background-color: #e3f2fd; /* Light blue for the phrase */
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    width: 60%;
+    text-align: center;
+  }
+  
+  .keystroke-input {
+    font-family: 'Roboto', sans-serif;
+    font-size: 1rem;
+    padding: 10px;
+    border: 1px solid #b0bec5;
+    border-radius: 8px;
+    width: 60%;
+    margin-bottom: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .success-message {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #81c784; /* Light green */
+    color: white;
+    font-family: 'Arial', sans-serif;
+    font-size: 1.2rem;
+    text-align: center;
+    width: 60%;
+  }
+  

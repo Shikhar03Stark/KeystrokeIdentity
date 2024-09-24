@@ -176,8 +176,8 @@ class VerifyKeyStrokeHandler:
     user: Optional[UserSchema] = None
     phrase_done = 0
     phrase_required = 3
-    match_samples = 5
-    matching_threshold = 0.05
+    match_samples = 7
+    matching_threshold = 0.001
     total_embeddings = 0
     matched_embeddings = 0
     keywise_feature_generator: callable
@@ -264,7 +264,7 @@ class VerifyKeyStrokeHandler:
         if self.phrase_done < self.phrase_required:
             raise Exception(f"Phrases not yet completed {self.phrase_done} of {self.phrase_required}")
         
-        if self.confidence < 0.8:
+        if self.confidence < 0.6:
             raise Exception(f"Confidence is below threshold: {self.confidence}")
         return _create_jwt_token(self.user)
     
