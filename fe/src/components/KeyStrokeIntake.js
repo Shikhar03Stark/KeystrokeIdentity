@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom"; // Import useNavigate
 import "./KeyStrokeIntake.css"; // Import the CSS file
+import config from "../config"
 
 const KeyStrokeIntake = () => {
   const location = useLocation();
@@ -19,11 +20,11 @@ const KeyStrokeIntake = () => {
   const [countdown, setCountdown] = useState(3); // Timer state for 3-second countdown
   const [showSuccessMessage, setShowSuccessMessage] = useState(false); // Message state
   const ws = useRef(null);
-  const backend_url = "http://localhost:8000" // http://keystroke.devitvish.in
+  const backend_host = `${config.backend_host}` // http://keystroke.devitvish.in
 
   // Initialize WebSocket connection and send INIT event
   useEffect(() => {
-    ws.current = new WebSocket(`${backend_url}/register_keystrokes`);
+    ws.current = new WebSocket(`ws://${backend_host}/register_keystrokes`);
 
     ws.current.onopen = () => {
       console.log("WebSocket connection established.");

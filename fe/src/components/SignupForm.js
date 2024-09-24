@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SignupForm.css'; // Import the new CSS for styling
+import config from '../config'; // Import the config file
 
 function RegistrationForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const backend_url = "http://localhost:8000" // http://keystroke.devitvish.in
+  const backend_url = `http://${config.backend_host}` // http://keystroke.devitvish.in
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
-      const response = await fetch(`${backend_url}/signup`, {
+      const response = await fetch(`http://${backend_url}/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

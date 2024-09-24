@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LoginForm.css";
+import config from "../config";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
@@ -21,7 +22,7 @@ const LoginForm = () => {
 
   // WebSocket connection setup
   useEffect(() => {
-    ws.current = new WebSocket("ws://localhost:8000/verify_keystrokes");
+    ws.current = new WebSocket(`ws://${config.backend_host}/verify_keystrokes`);
 
     ws.current.onopen = () => {
       console.log("WebSocket connection established.");
