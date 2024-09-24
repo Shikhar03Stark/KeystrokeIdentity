@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keystroke-fe-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: keystroke-fe
+  template:
+    metadata:
+      labels:
+        app: keystroke-fe
+    spec:
+      containers:
+        - name: keystroke-fe
+          image: 'shikhar03stark/keystroke-identity-fe:1'
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80      
+          env:
+            - name: BACKEND_HOST
+              value: 'keystroke-api.devitvish.in'
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keystroke-fe-service
+  labels:
+    app: keystroke-fe-service
+spec:
+  type: LoadBalancer
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+    - name: https
+      protocol: TCP
+      port: 443
+      targetPort: 80
+  selector:
+    app: keystroke-fe

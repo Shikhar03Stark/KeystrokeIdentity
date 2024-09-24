@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SignupForm.css'; // Import the new CSS for styling
+import config from '../config'; // Import the config file
 
 function RegistrationForm() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+<<<<<<< Updated upstream
+=======
+  const backend_url = `http://${config.backend_host}` // http://keystroke.devitvish.in
+>>>>>>> Stashed changes
 
   const handleSubmit = async (event) => {
     event.preventDefault();
