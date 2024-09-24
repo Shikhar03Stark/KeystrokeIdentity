@@ -177,7 +177,7 @@ class VerifyKeyStrokeHandler:
     phrase_done = 0
     phrase_required = 3
     match_samples = 5
-    matching_threshold = 0.05
+    matching_threshold = 0.0003
     total_embeddings = 0
     matched_embeddings = 0
     keywise_feature_generator: callable
@@ -254,6 +254,7 @@ class VerifyKeyStrokeHandler:
                 else:
                     print(f"Embedding cosine distance {cosine_dist} is below threshold for user {self.user.username}")
         
+        print(f"Total embeddings: {self.total_embeddings}, matched embeddings: {self.matched_embeddings}")
         self.phrase_done += 1
         self.confidence = self.matched_embeddings / self.total_embeddings if self.total_embeddings > 0 else 0.0
         self.phrase_embeddings = []
@@ -264,7 +265,7 @@ class VerifyKeyStrokeHandler:
         if self.phrase_done < self.phrase_required:
             raise Exception(f"Phrases not yet completed {self.phrase_done} of {self.phrase_required}")
         
-        if self.confidence < 0.8:
+        if self.confidence < 0.6:
             raise Exception(f"Confidence is below threshold: {self.confidence}")
         return _create_jwt_token(self.user)
     

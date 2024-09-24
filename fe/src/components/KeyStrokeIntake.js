@@ -100,7 +100,7 @@ const KeyStrokeIntake = () => {
             timer--;
             if (timer < 0) {
               clearInterval(countdownInterval);
-              navigate("/"); // Redirect to home page after countdown
+              navigate("/login"); // Redirect to home page after countdown
             }
           }, 1000);
         }
@@ -137,7 +137,7 @@ const KeyStrokeIntake = () => {
 
   return (
     <div className="keystroke-container">
-      <h3 className="keystroke-title">Type the following phrase:</h3>
+      <h3 className="keystroke-title">Type the following phrase {phraseIndex+1} / {phrases.length} :</h3>
       <p className="keystroke-phrase">{currentPhrase}</p>
       <input
         className="keystroke-input"

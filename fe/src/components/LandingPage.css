@@ -1,0 +1,62 @@
+/* HomePage.css */
+.homepage-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f8ff; /* Soft light blue background */
+  }
+  
+  .content {
+    text-align: center;
+    padding: 50px;
+    background: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+  }
+  
+  h1 {
+    color: #4a90e2;
+    font-size: 36px;
+    margin-bottom: 20px;
+  }
+  
+  .intro-text {
+    color: #555;
+    font-size: 18px;
+    margin-bottom: 40px;
+  }
+  
+  .buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .btn {
+    padding: 12px 24px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .login-btn {
+    background-color: #4a90e2;
+    color: white;
+  }
+  
+  .signup-btn {
+    background-color: #50c878;
+    color: white;
+  }
+  
+  .btn:hover {
+    background-color: #3a70b2; /* Slightly darker on hover for login */
+  }
+  
+  .signup-btn:hover {
+    background-color: #3aa864; /* Slightly darker on hover for signup */
+  }
+  

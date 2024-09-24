@@ -1,5 +1,6 @@
 
 
+import json
 from typing import Optional
 from pydantic import BaseModel
 
@@ -10,7 +11,7 @@ class KeyStrokeResponse(BaseModel):
     payload: Optional[str] = ""
     
     def to_json(self):
-        return str({
+        return json.dumps({
             'status': self.status,
             'payload': self.payload
         })
@@ -23,7 +24,7 @@ class KeyStrokeVerifyResponse(BaseModel):
     phrase_done: Optional[int] = 0
     
     def to_json(self):
-        return str({
+        return json.dumps({
             'status': self.status,
             'payload': self.payload,
             'user_id': self.user_id,
