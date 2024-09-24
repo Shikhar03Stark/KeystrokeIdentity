@@ -15,7 +15,7 @@ COPY --from=deps-download /app/package-lock.json ./package-lock.json
 
 COPY . .
 
-RUN npm run build
+RUN env && npm run build
 
 FROM nginx:1.21-alpine AS lean
 
