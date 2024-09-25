@@ -21,7 +21,6 @@ const KeyStrokeIntake = () => {
   const [showSuccessMessage, setShowSuccessMessage] = useState(false); // Message state
   const ws = useRef(null);
   const backend_host = `${config.backend_host}` // http://keystroke.devitvish.in
-
   // Initialize WebSocket connection and send INIT event
   useEffect(() => {
     ws.current = new WebSocket(`ws://${backend_host}/register_keystrokes`);
@@ -45,7 +44,7 @@ const KeyStrokeIntake = () => {
         ws.current.close();
       }
     };
-  }, [userId]);
+  }, [userId, backend_host]);
 
   // Function to send key event (STROKE mode)
   const sendKeyEvent = useCallback((eventType, key) => {

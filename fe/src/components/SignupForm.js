@@ -14,7 +14,7 @@ function RegistrationForm() {
     event.preventDefault();
 
     try {
-      const response = await fetch(`http://${backend_url}/signup`, {
+      const response = await fetch(`${backend_url}/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
