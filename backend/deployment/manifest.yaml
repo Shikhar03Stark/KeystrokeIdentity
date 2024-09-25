@@ -87,7 +87,7 @@ spec:
     spec:
       containers:
         - name: keystroke-app
-          image: 'shikhar03stark/keystroke-identity-app:4'
+          image: 'shikhar03stark/keystroke-identity-app:5'
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000      

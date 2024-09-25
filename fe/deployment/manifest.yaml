@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: keystroke-fe
-          image: 'shikhar03stark/keystroke-identity-fe:1'
+          image: 'shikhar03stark/keystroke-identity-fe:3'
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80      
